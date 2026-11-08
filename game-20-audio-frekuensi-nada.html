@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>20. Tebak Tangga Nada Musik - Game Edukasi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .game-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 680px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    .game-title { font-size: 1.25rem; font-weight: 700; color: #38bdf8; }
+    .badge {
+      font-size: 0.75rem;
+      background: #334155;
+      color: #38bdf8;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      font-weight: 600;
+      border: 1px solid #475569;
+    }
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .stat-val { color: #f59e0b; font-weight: 700; }
+    .btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary { background: #475569; }
+    .btn-secondary:hover { background: #334155; }
+    .btn-danger { background: #dc2626; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-success { background: #16a34a; }
+    .btn-success:hover { background: #15803d; }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #334155;
+      font-size: 0.875rem;
+    }
+    .nav-bar a { color: #38bdf8; text-decoration: none; font-weight: 500; }
+    .nav-bar a:hover { text-decoration: underline; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 16px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      text-align: center;
+    }
+    .modal-box h2 { margin-bottom: 12px; color: #f8fafc; font-size: 1.5rem; }
+    .modal-box p { color: #94a3b8; margin-bottom: 20px; line-height: 1.5; }
+    
+  </style>
+</head>
+<body>
+  <div class="game-card">
+    <div class="game-header">
+      <div>
+        <div class="game-title">20. Tebak Tangga Nada Musik</div>
+        <div style="font-size: 0.8rem; color: #94a3b8;">Materi: Seni Musik - Solmisasi & Frekuensi Nada</div>
+      </div>
+      <span class="badge">Seni & Gelombang</span>
+    </div>
+
+    <div class="instruction" style="font-size: 0.9rem; color: #cbd5e1; background: rgba(56, 189, 248, 0.1); padding: 8px 12px; border-left: 3px solid #38bdf8; border-radius: 4px;">
+      💡 <strong>Petunjuk:</strong> Dengarkan nada yang dibunyikan komputer, lalu tekan tombol solmisasi yang memiliki nada persis!
+    </div>
+
+    
+    <div class="stats-bar">
+      <div>Ronde: <span id="roundIdx" class="stat-val">1/5</span></div>
+      <div>Skor: <span id="score" class="stat-val">0</span></div>
+    </div>
+    <div style="background: #0f172a; padding: 24px; border-radius: 12px; margin: 16px 0; text-align: center;">
+      <button class="btn btn-primary" style="padding: 16px 28px; font-size: 1.2rem;" onclick="playTargetTone()">🔊 Putar Ulang Nada Soal</button>
+      <div style="font-size: 0.85rem; color: #94a3b8; margin-top: 10px;">Tekan tombol di atas untuk mendengar nada misterius.</div>
+    </div>
+    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px;">
+      <button class="btn btn-secondary" onclick="guessNote('Do', 261.63)">Do (C4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Re', 293.66)">Re (D4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Mi', 329.63)">Mi (E4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Fa', 349.23)">Fa (F4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Sol', 392.00)">Sol (G4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('La', 440.00)">La (A4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Si', 493.88)">Si (B4)</button>
+      <button class="btn btn-secondary" onclick="guessNote('Do Tggi', 523.25)">Do' (C5)</button>
+    </div>
+    
+
+    <div class="nav-bar">
+      <span style="color: #64748b;">Game Edukasi Seri Web Vanilla</span>
+      <a href="index.html">← Kembali ke Menu Utama</a>
+    </div>
+  </div>
+
+  <div id="gameOverModal" class="modal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Permainan Selesai! 🎉</h2>
+      <p id="modalDesc">Skor Akhir: <strong id="modalScore" style="color: #f59e0b; font-size: 1.3rem;">0</strong></p>
+      <button class="btn btn-primary" onclick="restartGame()">Main Lagi 🔄</button>
+      <div style="margin-top: 14px;">
+        <a href="index.html" class="btn btn-secondary" style="font-size: 0.85rem; padding: 6px 14px;">Kembali ke Portal Game</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(type) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(146.83, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'win') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(554.37, now + 0.1);
+          osc.frequency.setValueAtTime(659.25, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } else if (type === 'click') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        }
+      } catch (e) { console.log(e); }
+    }
+
+    function showGameOver(title, score, desc) {
+      playBeep('win');
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalScore').innerText = score;
+      if (desc) document.getElementById('modalDesc').innerHTML = desc;
+      document.getElementById('gameOverModal').classList.add('active');
+      // Save high score to localStorage
+      try {
+        const pageKey = window.location.pathname.split('/').pop() || 'game';
+        const best = localStorage.getItem('hs_' + pageKey) || 0;
+        if (score > best) localStorage.setItem('hs_' + pageKey, score);
+      } catch (e) {}
+    }
+
+    
+    const notes = [
+      { name: "Do", freq: 261.63 },
+      { name: "Mi", freq: 329.63 },
+      { name: "Sol", freq: 392.00 },
+      { name: "Do Tggi", freq: 523.25 },
+      { name: "La", freq: 440.00 }
+    ];
+    let cur = 0, score = 0;
+
+    function playToneFreq(freq) {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
+      osc.start();
+      osc.stop(audioCtx.currentTime + 0.6);
+    }
+
+    function playTargetTone() {
+      playToneFreq(notes[cur].freq);
+    }
+
+    function startRound() {
+      if (cur >= notes.length) {
+        showGameOver("Telinga Emas Musisi!", score, `Skor Pendengaran Nada: ${score}`);
+        return;
+      }
+      document.getElementById('roundIdx').innerText = `${cur + 1}/${notes.length}`;
+      setTimeout(playTargetTone, 400);
+    }
+
+    function guessNote(name, freq) {
+      playToneFreq(freq);
+      if (name === notes[cur].name) {
+        score += 20;
+        document.getElementById('score').innerText = score;
+        cur++;
+        setTimeout(startRound, 700);
+      } else {
+        alert("Nada belum cocok, dengarkan lagi!");
+      }
+    }
+
+    function restartGame() {
+      document.getElementById('gameOverModal').classList.remove('active');
+      cur = 0; score = 0;
+      document.getElementById('score').innerText = '0';
+      startRound();
+    }
+    startRound();
+    
+  </script>
+</body>
+</html>

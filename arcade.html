@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eduverse 20: Portal Game Edukasi Interaktif</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #090d16;
+      color: #f1f5f9;
+      min-height: 100vh;
+      padding: 32px 20px;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(56, 189, 248, 0.12);
+      color: #38bdf8;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    h1 {
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #ffffff 0%, #94a3b8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    p.lead {
+      color: #94a3b8;
+      font-size: 1rem;
+      max-width: 650px;
+      margin: 0 auto;
+      line-height: 1.5;
+    }
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      background: #131b2e;
+      padding: 14px 18px;
+      border-radius: 14px;
+      border: 1px solid #1e293b;
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tab-btn {
+      background: #1e293b;
+      color: #94a3b8;
+      border: 1px solid #334155;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .tab-btn:hover, .tab-btn.active {
+      background: #2563eb;
+      color: #fff;
+      border-color: #3b82f6;
+    }
+    .search-box {
+      position: relative;
+      min-width: 240px;
+    }
+    .search-input {
+      width: 100%;
+      background: #090d16;
+      border: 1px solid #334155;
+      color: #fff;
+      padding: 8px 14px 8px 34px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .search-input:focus { border-color: #38bdf8; }
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #131b2e;
+      border: 1px solid #1e293b;
+      border-radius: 14px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: #38bdf8;
+      box-shadow: 0 12px 24px -10px rgba(56, 189, 248, 0.2);
+    }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .icon-box {
+      font-size: 1.8rem;
+    }
+    .cat-badge {
+      font-size: 0.7rem;
+      background: #1e293b;
+      color: #38bdf8;
+      padding: 4px 8px;
+      border-radius: 9999px;
+      font-weight: 700;
+      border: 1px solid #334155;
+      text-transform: uppercase;
+    }
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 4px;
+    }
+    .card-subj {
+      font-size: 0.8rem;
+      color: #f59e0b;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+    .card-desc {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.4;
+      margin-bottom: 16px;
+      flex-grow: 1;
+    }
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #1e293b;
+      padding-top: 12px;
+    }
+    .score-badge {
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+    .play-btn {
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: background 0.15s ease;
+    }
+    .play-btn:hover { background: #1d4ed8; }
+    footer {
+      margin-top: 48px;
+      text-align: center;
+      padding: 24px;
+      border-top: 1px solid #1e293b;
+      color: #64748b;
+      font-size: 0.85rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div style="display:flex;align-items:center;justify-content:center;gap:12px;margin-bottom:12px">
+        <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cyberTop" x1="18" y1="3" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#38BDF8"/>
+      <stop offset="100%" stop-color="#0284C7"/>
+    </linearGradient>
+    <linearGradient id="cyberLeft" x1="5" y1="10.5" x2="18" y2="33" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0369A1"/>
+      <stop offset="100%" stop-color="#0B132B"/>
+    </linearGradient>
+    <linearGradient id="cyberRight" x1="31" y1="10.5" x2="18" y2="33" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#2563EB"/>
+      <stop offset="100%" stop-color="#1E1B4B"/>
+    </linearGradient>
+    <linearGradient id="cyberCore" x1="18" y1="11" x2="18" y2="23" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#38BDF8"/>
+    </linearGradient>
+    <filter id="neonGlow" x="0" y="0" width="36" height="36" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="0" dy="0" stdDeviation="2" flood-color="#38BDF8" flood-opacity="0.45"/>
+    </filter>
+  </defs>
+  <g filter="url(#neonGlow)">
+    <!-- Top Face -->
+    <polygon points="18,4 30.5,11.2 18,18.4 5.5,11.2" fill="url(#cyberTop)" />
+    <!-- Left Face -->
+    <polygon points="5.5,11.2 18,18.4 18,32.8 5.5,25.6" fill="url(#cyberLeft)" />
+    <!-- Right Face -->
+    <polygon points="18,18.4 30.5,11.2 30.5,25.6 18,32.8" fill="url(#cyberRight)" />
+    <!-- Outer Contour -->
+    <polygon points="18,4 30.5,11.2 30.5,25.6 18,32.8 5.5,25.6 5.5,11.2" stroke="#38BDF8" stroke-width="1.4" stroke-linejoin="round"/>
+    <!-- Internal Creases -->
+    <line x1="5.5" y1="11.2" x2="18" y2="18.4" stroke="#7DD3FC" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="30.5" y1="11.2" x2="18" y2="18.4" stroke="#60A5FA" stroke-width="1.2" stroke-linecap="round"/>
+    <line x1="18" y1="18.4" x2="18" y2="32.8" stroke="#38BDF8" stroke-width="1.2" stroke-linecap="round"/>
+    <!-- Central Dimensional Prism Core -->
+    <polygon points="18,12 23,17 18,22 13,17" fill="url(#cyberCore)" stroke="#FFFFFF" stroke-width="0.8" />
+    <polyline points="13,17 18,18.4 23,17" stroke="#0284C7" stroke-width="0.7"/>
+    <line x1="18" y1="12" x2="18" y2="22" stroke="#0284C7" stroke-width="0.7"/>
+  </g>
+</svg>
+        <span style="font-size:22px;font-weight:900;letter-spacing:-0.5px;color:#f8fafc">CYBERVERSE <span style="background:rgba(56,189,248,0.15);color:#38bdf8;font-size:12px;padding:2px 8px;border-radius:999px;border:1px solid rgba(56,189,248,0.3)">3D ARCADE</span></span>
+      </div>
+      <div class="hero-badge">⚡ Interactive Gaming Hub • Zero Dependency Web Suite</div>
+      <h1>Semesta Belajar: 20 Game Edukasi Interaktif</h1>
+      <p class="lead">Koleksi 20 game edukasi web tanpa dependensi eksternal (Zero-Dependency), responsif, dilengkapi sintesis audio Web Audio API dan tracking skor lokal.</p>
+    </header>
+
+    <div class="filter-bar">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="filterCat('all', this)">Semua (20)</button>
+        <button class="tab-btn" onclick="filterCat('Kuis & Refleks', this)">Kuis & Refleks</button>
+        <button class="tab-btn" onclick="filterCat('Logika & Teka-Teki', this)">Logika & Teka-Teki</button>
+        <button class="tab-btn" onclick="filterCat('Matematika & Angka', this)">Matematika & Angka</button>
+        <button class="tab-btn" onclick="filterCat('Bahasa & Hafalan', this)">Bahasa & Hafalan</button>
+        <button class="tab-btn" onclick="filterCat('Seni & Gelombang', this)">Seni & Musik</button>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari judul / materi..." oninput="filterSearch()">
+      </div>
+    </div>
+
+    <div class="grid" id="gameGrid">
+      
+    <div class="card" data-cat="Kuis & Refleks" data-title="01. trivia cepat tata surya ipa - astronomi">
+      <div class="card-top">
+        <div class="icon-box">🪐</div>
+        <span class="cat-badge">Kuis & Refleks</span>
+      </div>
+      <h3 class="card-title">01. Trivia Cepat Tata Surya</h3>
+      <div class="card-subj">IPA - Astronomi</div>
+      <p class="card-desc">Kuis countdown astronomi dan planet di tata surya.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-01-trivia-tata-surya.html">Skor: 0</span>
+        <a href="game-01-trivia-tata-surya.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Kuis & Refleks" data-title="02. whack-a-mole sampah organik lingkungan hidup">
+      <div class="card-top">
+        <div class="icon-box">🍃</div>
+        <span class="cat-badge">Kuis & Refleks</span>
+      </div>
+      <h3 class="card-title">02. Whack-a-Mole Sampah Organik</h3>
+      <div class="card-subj">Lingkungan Hidup</div>
+      <p class="card-desc">Pukul hanya sampah organik yang muncul sebelum hilang.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-02-whack-sampah.html">Skor: 0</span>
+        <a href="game-02-whack-sampah.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Kuis & Refleks" data-title="03. benar / salah: sejarah ri sejarah kemerdekaan">
+      <div class="card-top">
+        <div class="icon-box">🇮🇩</div>
+        <span class="cat-badge">Kuis & Refleks</span>
+      </div>
+      <h3 class="card-title">03. Benar / Salah: Sejarah RI</h3>
+      <div class="card-subj">Sejarah Kemerdekaan</div>
+      <p class="card-desc">Evaluasi cepat fakta seputar detik-detik kemerdekaan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-03-tinder-fakta-sejarah.html">Skor: 0</span>
+        <a href="game-03-tinder-fakta-sejarah.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Kuis & Refleks" data-title="04. tangkap pecahan senilai 1/2 matematika pecahan">
+      <div class="card-top">
+        <div class="icon-box">🧺</div>
+        <span class="cat-badge">Kuis & Refleks</span>
+      </div>
+      <h3 class="card-title">04. Tangkap Pecahan Senilai 1/2</h3>
+      <div class="card-subj">Matematika Pecahan</div>
+      <p class="card-desc">Gerakkan keranjang menangkap pecahan bernilai setara 1/2.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-04-tangkap-pecahan.html">Skor: 0</span>
+        <a href="game-04-tangkap-pecahan.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Kuis & Refleks" data-title="05. balap ketik vocabulary bahasa inggris">
+      <div class="card-top">
+        <div class="icon-box">⌨️</div>
+        <span class="cat-badge">Kuis & Refleks</span>
+      </div>
+      <h3 class="card-title">05. Balap Ketik Vocabulary</h3>
+      <div class="card-subj">Bahasa Inggris</div>
+      <p class="card-desc">Ketik kata bahasa Inggris cepat sebelum waktu habis.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-05-balap-ketik-vocab.html">Skor: 0</span>
+        <a href="game-05-balap-ketik-vocab.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Logika & Teka-Teki" data-title="06. memory card unsur kimia kimia periodik">
+      <div class="card-top">
+        <div class="icon-box">🧪</div>
+        <span class="cat-badge">Logika & Teka-Teki</span>
+      </div>
+      <h3 class="card-title">06. Memory Card Unsur Kimia</h3>
+      <div class="card-subj">Kimia Periodik</div>
+      <p class="card-desc">Buka kartu dan pasangkan simbol kimia dengan nama unsurnya.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-06-memory-kartu-unsur.html">Skor: 0</span>
+        <a href="game-06-memory-kartu-unsur.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Logika & Teka-Teki" data-title="07. susun huruf organ tubuh biologi anatomi">
+      <div class="card-top">
+        <div class="icon-box">🫀</div>
+        <span class="cat-badge">Logika & Teka-Teki</span>
+      </div>
+      <h3 class="card-title">07. Susun Huruf Organ Tubuh</h3>
+      <div class="card-subj">Biologi Anatomi</div>
+      <p class="card-desc">Susun huruf acak nama organ sesuai fungsi biologisnya.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-07-susun-huruf-anatomi.html">Skor: 0</span>
+        <a href="game-07-susun-huruf-anatomi.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Logika & Teka-Teki" data-title="08. labirin logika pemrograman informatika / coding">
+      <div class="card-top">
+        <div class="icon-box">🤖</div>
+        <span class="cat-badge">Logika & Teka-Teki</span>
+      </div>
+      <h3 class="card-title">08. Labirin Logika Pemrograman</h3>
+      <div class="card-subj">Informatika / Coding</div>
+      <p class="card-desc">Susun antrean instruksi robot untuk mencapai bintang tujuan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-08-labirin-algoritma.html">Skor: 0</span>
+        <a href="game-08-labirin-algoritma.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Logika & Teka-Teki" data-title="09. susun rantai makanan biologi ekosistem">
+      <div class="card-top">
+        <div class="icon-box">🌾</div>
+        <span class="cat-badge">Logika & Teka-Teki</span>
+      </div>
+      <h3 class="card-title">09. Susun Rantai Makanan</h3>
+      <div class="card-subj">Biologi Ekosistem</div>
+      <p class="card-desc">Urutkan organisme dari Produsen hingga Pengurai.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-09-drag-drop-rantai-makanan.html">Skor: 0</span>
+        <a href="game-09-drag-drop-rantai-makanan.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Logika & Teka-Teki" data-title="10. jodohkan negara & ibukota geografi dunia">
+      <div class="card-top">
+        <div class="icon-box">🗺️</div>
+        <span class="cat-badge">Logika & Teka-Teki</span>
+      </div>
+      <h3 class="card-title">10. Jodohkan Negara & Ibukota</h3>
+      <div class="card-subj">Geografi Dunia</div>
+      <p class="card-desc">Jodohkan nama negara di kiri dengan ibukotanya di kanan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-10-hubungkan-ibukota.html">Skor: 0</span>
+        <a href="game-10-hubungkan-ibukota.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Matematika & Angka" data-title="11. math attack: pertahanan meteor aritmatika cepat">
+      <div class="card-top">
+        <div class="icon-box">☄️</div>
+        <span class="cat-badge">Matematika & Angka</span>
+      </div>
+      <h3 class="card-title">11. Math Attack: Pertahanan Meteor</h3>
+      <div class="card-subj">Aritmatika Cepat</div>
+      <p class="card-desc">Ketik hasil hitung meteor angka sebelum menabrak bumi.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-11-math-attack-meteor.html">Skor: 0</span>
+        <a href="game-11-math-attack-meteor.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Matematika & Angka" data-title="12. sortir balok angka bilangan bulat">
+      <div class="card-top">
+        <div class="icon-box">📊</div>
+        <span class="cat-badge">Matematika & Angka</span>
+      </div>
+      <h3 class="card-title">12. Sortir Balok Angka</h3>
+      <div class="card-subj">Bilangan Bulat</div>
+      <p class="card-desc">Tukar balok visual agar urut dari terkecil ke terbesar.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-12-sort-angka-visual.html">Skor: 0</span>
+        <a href="game-12-sort-angka-visual.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Matematika & Angka" data-title="13. duel skala suhu: mana lebih panas? fisika suhu">
+      <div class="card-top">
+        <div class="icon-box">🌡️</div>
+        <span class="cat-badge">Matematika & Angka</span>
+      </div>
+      <h3 class="card-title">13. Duel Skala Suhu: Mana Lebih Panas?</h3>
+      <div class="card-subj">Fisika Suhu</div>
+      <p class="card-desc">Bandingkan temperatur dua wadah beda satuan suhu.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-13-tebak-skala-suhu.html">Skor: 0</span>
+        <a href="game-13-tebak-skala-suhu.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Matematika & Angka" data-title="14. dapur pecahan pizza pecahan geometri">
+      <div class="card-top">
+        <div class="icon-box">🍕</div>
+        <span class="cat-badge">Matematika & Angka</span>
+      </div>
+      <h3 class="card-title">14. Dapur Pecahan Pizza</h3>
+      <div class="card-subj">Pecahan Geometri</div>
+      <p class="card-desc">Pilih potongan pizza di loyang sesuai fraksi yang dipesan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-14-pecahan-pizza.html">Skor: 0</span>
+        <a href="game-14-pecahan-pizza.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Matematika & Angka" data-title="15. neraca persamaan aljabar aljabar linear">
+      <div class="card-top">
+        <div class="icon-box">⚖️</div>
+        <span class="cat-badge">Matematika & Angka</span>
+      </div>
+      <h3 class="card-title">15. Neraca Persamaan Aljabar</h3>
+      <div class="card-subj">Aljabar Linear</div>
+      <p class="card-desc">Cari nilai variabel X agar kedua lengan neraca seimbang.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-15-timbangan-aljabar.html">Skor: 0</span>
+        <a href="game-15-timbangan-aljabar.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Bahasa & Hafalan" data-title="16. tebak nama pahlawan nasional sejarah nasional">
+      <div class="card-top">
+        <div class="icon-box">🎖️</div>
+        <span class="cat-badge">Bahasa & Hafalan</span>
+      </div>
+      <h3 class="card-title">16. Tebak Nama Pahlawan Nasional</h3>
+      <div class="card-subj">Sejarah Nasional</div>
+      <p class="card-desc">Tebak huruf nama pahlawan berdasarkan petunjuk perjuangan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-16-hangman-pahlawan.html">Skor: 0</span>
+        <a href="game-16-hangman-pahlawan.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Bahasa & Hafalan" data-title="17. cari kata: fauna endemik ri biologi fauna">
+      <div class="card-top">
+        <div class="icon-box">🦧</div>
+        <span class="cat-badge">Bahasa & Hafalan</span>
+      </div>
+      <h3 class="card-title">17. Cari Kata: Fauna Endemik RI</h3>
+      <div class="card-subj">Biologi Fauna</div>
+      <p class="card-desc">Temukan satwa langka tersembunyi di dalam kisi huruf 7x7.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-17-word-search-hewan.html">Skor: 0</span>
+        <a href="game-17-word-search-hewan.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Bahasa & Hafalan" data-title="18. kalimat rumpang: uji kata baku bahasa indonesia">
+      <div class="card-top">
+        <div class="icon-box">✍️</div>
+        <span class="cat-badge">Bahasa & Hafalan</span>
+      </div>
+      <h3 class="card-title">18. Kalimat Rumpang: Uji Kata Baku</h3>
+      <div class="card-subj">Bahasa Indonesia</div>
+      <p class="card-desc">Lengkapi kalimat dengan pilihan kata baku sesuai KBBI/PUEBI.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-18-kalimat-rumpang-bahasa.html">Skor: 0</span>
+        <a href="game-18-kalimat-rumpang-bahasa.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Bahasa & Hafalan" data-title="19. kronologi detik proklamasi sejarah 1945">
+      <div class="card-top">
+        <div class="icon-box">📜</div>
+        <span class="cat-badge">Bahasa & Hafalan</span>
+      </div>
+      <h3 class="card-title">19. Kronologi Detik Proklamasi</h3>
+      <div class="card-subj">Sejarah 1945</div>
+      <p class="card-desc">Susun urutan kronologi peristiwa proklamasi kemerdekaan.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-19-timeline-kemerdekaan.html">Skor: 0</span>
+        <a href="game-19-timeline-kemerdekaan.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    <div class="card" data-cat="Seni & Gelombang" data-title="20. tebak tangga nada musik seni musik">
+      <div class="card-top">
+        <div class="icon-box">🎵</div>
+        <span class="cat-badge">Seni & Gelombang</span>
+      </div>
+      <h3 class="card-title">20. Tebak Tangga Nada Musik</h3>
+      <div class="card-subj">Seni Musik</div>
+      <p class="card-desc">Dengarkan nada synthesizer dan tebak tuts solmisasi yang tepat.</p>
+      <div class="card-footer">
+        <span class="score-badge" id="badge-game-20-audio-frekuensi-nada.html">Skor: 0</span>
+        <a href="game-20-audio-frekuensi-nada.html" class="play-btn">Mainkan ▶</a>
+      </div>
+    </div>
+    
+    </div>
+
+    <footer>
+      <p>CyberVerse Hub • Koleksi 20 Permainan Edukasi Interaktif & Evaluasi Komputasi Multi-Moda.</p>
+      <p style="margin-top: 4px; color: #475569;">100% Standalone Client-side • Zero Asset Dependency • Web Audio API Synth</p>
+    </footer>
+  </div>
+
+  <script>
+    // Load high scores from localStorage
+    document.addEventListener('DOMContentLoaded', () => {
+      const games = ['game-01-trivia-tata-surya.html', 'game-02-whack-sampah.html', 'game-03-tinder-fakta-sejarah.html', 'game-04-tangkap-pecahan.html', 'game-05-balap-ketik-vocab.html', 'game-06-memory-kartu-unsur.html', 'game-07-susun-huruf-anatomi.html', 'game-08-labirin-algoritma.html', 'game-09-drag-drop-rantai-makanan.html', 'game-10-hubungkan-ibukota.html', 'game-11-math-attack-meteor.html', 'game-12-sort-angka-visual.html', 'game-13-tebak-skala-suhu.html', 'game-14-pecahan-pizza.html', 'game-15-timbangan-aljabar.html', 'game-16-hangman-pahlawan.html', 'game-17-word-search-hewan.html', 'game-18-kalimat-rumpang-bahasa.html', 'game-19-timeline-kemerdekaan.html', 'game-20-audio-frekuensi-nada.html'];
+      games.forEach(file => {
+        const hs = localStorage.getItem('hs_' + file);
+        if (hs) {
+          const el = document.getElementById('badge-' + file);
+          if (el) {
+            el.innerText = 'Best: ' + hs;
+            el.style.color = '#f59e0b';
+          }
+        }
+      });
+    });
+
+    let currentCategory = 'all';
+
+    function filterCat(cat, btn) {
+      currentCategory = cat;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    }
+
+    function filterSearch() {
+      applyFilters();
+    }
+
+    function applyFilters() {
+      const query = document.getElementById('searchInput').value.toLowerCase().trim();
+      const cards = document.querySelectorAll('.card');
+
+      cards.forEach(card => {
+        const cardCat = card.getAttribute('data-cat');
+        const cardTitle = card.getAttribute('data-title');
+
+        const matchesCat = (currentCategory === 'all' || cardCat === currentCategory);
+        const matchesQuery = (!query || cardTitle.includes(query));
+
+        if (matchesCat && matchesQuery) {
+          card.style.display = 'flex';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>

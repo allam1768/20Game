@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>02. Whack-a-Mole Sampah Organik - Game Edukasi</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .game-card {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      width: 100%;
+      max-width: 680px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .game-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+      padding-bottom: 12px;
+    }
+    .game-title { font-size: 1.25rem; font-weight: 700; color: #38bdf8; }
+    .badge {
+      font-size: 0.75rem;
+      background: #334155;
+      color: #38bdf8;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      text-transform: uppercase;
+      font-weight: 600;
+      border: 1px solid #475569;
+    }
+    .stats-bar {
+      display: flex;
+      justify-content: space-around;
+      background: #0f172a;
+      padding: 10px;
+      border-radius: 10px;
+      font-weight: 600;
+      color: #cbd5e1;
+    }
+    .stat-val { color: #f59e0b; font-weight: 700; }
+    .btn {
+      background: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn:hover { background: #1d4ed8; }
+    .btn:active { transform: scale(0.98); }
+    .btn-secondary { background: #475569; }
+    .btn-secondary:hover { background: #334155; }
+    .btn-danger { background: #dc2626; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-success { background: #16a34a; }
+    .btn-success:hover { background: #15803d; }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #334155;
+      font-size: 0.875rem;
+    }
+    .nav-bar a { color: #38bdf8; text-decoration: none; font-weight: 500; }
+    .nav-bar a:hover { text-decoration: underline; }
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: #1e293b;
+      border: 1px solid #475569;
+      border-radius: 16px;
+      max-width: 440px;
+      width: 100%;
+      padding: 24px;
+      text-align: center;
+    }
+    .modal-box h2 { margin-bottom: 12px; color: #f8fafc; font-size: 1.5rem; }
+    .modal-box p { color: #94a3b8; margin-bottom: 20px; line-height: 1.5; }
+    
+  </style>
+</head>
+<body>
+  <div class="game-card">
+    <div class="game-header">
+      <div>
+        <div class="game-title">02. Whack-a-Mole Sampah Organik</div>
+        <div style="font-size: 0.8rem; color: #94a3b8;">Materi: Lingkungan Hidup & Daur Ulang</div>
+      </div>
+      <span class="badge">Kuis & Refleks</span>
+    </div>
+
+    <div class="instruction" style="font-size: 0.9rem; color: #cbd5e1; background: rgba(56, 189, 248, 0.1); padding: 8px 12px; border-left: 3px solid #38bdf8; border-radius: 4px;">
+      💡 <strong>Petunjuk:</strong> Klik SEGERA sampah ORGANIK (daun, kulit buah, sisa makanan)! JANGAN klik plastik/kaleng!
+    </div>
+
+    
+    <div class="stats-bar">
+      <div>Waktu: <span id="timeLeft" class="stat-val">30</span>s</div>
+      <div>Skor: <span id="score" class="stat-val">0</span></div>
+      <div>Streak: <span id="streak" class="stat-val">0</span></div>
+    </div>
+    <div id="moleGrid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 10px;"></div>
+    
+
+    <div class="nav-bar">
+      <span style="color: #64748b;">Game Edukasi Seri Web Vanilla</span>
+      <a href="index.html">← Kembali ke Menu Utama</a>
+    </div>
+  </div>
+
+  <div id="gameOverModal" class="modal">
+    <div class="modal-box">
+      <h2 id="modalTitle">Permainan Selesai! 🎉</h2>
+      <p id="modalDesc">Skor Akhir: <strong id="modalScore" style="color: #f59e0b; font-size: 1.3rem;">0</strong></p>
+      <button class="btn btn-primary" onclick="restartGame()">Main Lagi 🔄</button>
+      <div style="margin-top: 14px;">
+        <a href="index.html" class="btn btn-secondary" style="font-size: 0.85rem; padding: 6px 14px;">Kembali ke Portal Game</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    function playBeep(type) {
+      try {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        const now = audioCtx.currentTime;
+
+        if (type === 'correct') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.15);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'wrong') {
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.linearRampToValueAtTime(146.83, now + 0.2);
+          gain.gain.setValueAtTime(0.25, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'win') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.setValueAtTime(554.37, now + 0.1);
+          osc.frequency.setValueAtTime(659.25, now + 0.2);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+          osc.start(now);
+          osc.stop(now + 0.5);
+        } else if (type === 'click') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(400, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        }
+      } catch (e) { console.log(e); }
+    }
+
+    function showGameOver(title, score, desc) {
+      playBeep('win');
+      document.getElementById('modalTitle').innerText = title;
+      document.getElementById('modalScore').innerText = score;
+      if (desc) document.getElementById('modalDesc').innerHTML = desc;
+      document.getElementById('gameOverModal').classList.add('active');
+      // Save high score to localStorage
+      try {
+        const pageKey = window.location.pathname.split('/').pop() || 'game';
+        const best = localStorage.getItem('hs_' + pageKey) || 0;
+        if (score > best) localStorage.setItem('hs_' + pageKey, score);
+      } catch (e) {}
+    }
+
+    
+    const items = [
+      { name: "Daun Kering 🍂", type: "organik" },
+      { name: "Kulit Pisang 🍌", type: "organik" },
+      { name: "Apel Busuk 🍏", type: "organik" },
+      { name: "Sisa Nasi 🍚", type: "organik" },
+      { name: "Botol Plastik 🧴", type: "anorganik" },
+      { name: "Kaleng Soda 🥤", type: "anorganik" },
+      { name: "Kantung Kresek 🛍️", type: "anorganik" },
+      { name: "Baterai Bekas 🔋", type: "anorganik" }
+    ];
+    let score = 0, streak = 0, timeLeft = 30, gameTimer = null, moleTimer = null;
+    const grid = document.getElementById('moleGrid');
+
+    for (let i = 0; i < 9; i++) {
+      const hole = document.createElement('div');
+      hole.id = 'hole-' + i;
+      hole.style.cssText = 'height: 90px; background: #0f172a; border: 2px dashed #334155; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; user-select: none; font-weight: 600; font-size: 0.9rem; text-align: center; padding: 4px;';
+      grid.appendChild(hole);
+    }
+
+    function spawnMole() {
+      for (let i = 0; i < 9; i++) {
+        const h = document.getElementById('hole-' + i);
+        h.innerHTML = '';
+        h.onclick = null;
+        h.style.background = '#0f172a';
+      }
+      const randHole = Math.floor(Math.random() * 9);
+      const randItem = items[Math.floor(Math.random() * items.length)];
+      const target = document.getElementById('hole-' + randHole);
+      target.innerText = randItem.name;
+      target.style.background = '#1e3a8a';
+      target.onclick = () => {
+        target.onclick = null;
+        if (randItem.type === 'organik') {
+          score += 10;
+          streak++;
+          playBeep('correct');
+          target.style.background = '#166534';
+        } else {
+          score = Math.max(0, score - 5);
+          streak = 0;
+          playBeep('wrong');
+          target.style.background = '#991b1b';
+        }
+        document.getElementById('score').innerText = score;
+        document.getElementById('streak').innerText = streak;
+      };
+    }
+
+    function startGame() {
+      score = 0; streak = 0; timeLeft = 30;
+      document.getElementById('score').innerText = '0';
+      document.getElementById('streak').innerText = '0';
+      document.getElementById('timeLeft').innerText = timeLeft;
+      moleTimer = setInterval(spawnMole, 900);
+      gameTimer = setInterval(() => {
+        timeLeft--;
+        document.getElementById('timeLeft').innerText = timeLeft;
+        if (timeLeft <= 0) {
+          clearInterval(gameTimer);
+          clearInterval(moleTimer);
+          showGameOver("Waktu Habis!", score, `Kamu mengumpulkan ${score} poin dari klasifikasi sampah!`);
+        }
+      }, 1000);
+    }
+    function restartGame() {
+      document.getElementById('gameOverModal').classList.remove('active');
+      startGame();
+    }
+    startGame();
+    
+  </script>
+</body>
+</html>
